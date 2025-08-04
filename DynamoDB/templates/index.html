@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DynamoDB Book Manager</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 8px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📚 Book Manager</h1>
+
+    <h2>Add a Book</h2>
+    <form id="addForm">
+        <div class="form-group">
+            <input type="text" name="writer" placeholder="Writer Name" required>
+            <input type="text" name="book" placeholder="Book Name" required>
+            <input type="text" name="price" placeholder="Price" required>
+            <button type="submit">Add</button>
+        </div>
+    </form>
+
+    <h2>Find a Book</h2>
+    <form id="getForm">
+        <div class="form-group">
+            <input type="text" name="writer" placeholder="Writer Name" required>
+            <input type="text" name="book" placeholder="Book Name" required>
+            <button type="submit">Find</button>
+        </div>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('addForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const payload = {
+                writer: form.writer.value,
+                book: form.book.value,
+                price: form.price.value
+            };
+            const res = await fetch('/add_book', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            const json = await res.json();
+            document.getElementById('result').innerText = JSON.stringify(json, null, 2);
+        };
+
+        document.getElementById('getForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const url = `/get_book?writer=${form.writer.value}&book=${form.book.value}`;
+            const res = await fetch(url);
+            const json = await res.json();
+            document.getElementById('result').innerText = JSON.stringify(json, null, 2);
+        };
+    </script>
+</body>
+</html>
